@@ -1,7 +1,6 @@
-import WasmLZWDecoder from 'lzw-tiff-decoder';
+import { decompress } from 'lzw-tiff-decoder';
 import BaseDecoder from './basedecoder';
 
-const decoder = new WasmLZWDecoder(); // won't initialize wasm until fist decode call.
 export default class LZWDecoder extends BaseDecoder {
   constructor(fileDirectory) {
     super();
@@ -13,10 +12,7 @@ export default class LZWDecoder extends BaseDecoder {
 
   async decodeBlock(buffer) {
     const bytes = new Uint8Array(buffer);
-    const decoded = await decoder.decompress(bytes, this.maxUncompressedSize);
-    if (decoded.length === 0) {
-      throw Error('Failed LZW decompression.');
-    }
+    const decoded = await decompress(bytes, this.maxUncompressedSize);
     return decoded.buffer;
   }
 }
